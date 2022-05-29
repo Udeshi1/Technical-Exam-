@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+  mongo:
+    hostname: "mongo"
+    image: mongo:latest
+    ports:
+      - "127.0.0.1:27017:27017"
+    networks:
+      - hello-network
+
+  hello:
+    build:
+      context: ./hello
+    hostname: "hello"
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - mongo
+    networks:
+      - hello-network
+
+  nginx:
+    build:
+      context: ./nginx_service
+    hostname: "nginx"
+    ports:
+      - "80:80"
+    networks:
+      - hello-network
+    depends_on:
+      - mongo
+      - hello
+
+networks:
+  hello-network:
+    driver: bridge
